@@ -1,0 +1,8 @@
+builds:
+  - binary: configbuddy.v2
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
