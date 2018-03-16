@@ -1,0 +1,55 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "+FJjoMbY+H7jumeSRMatU8acjTo=",
+			"path": "github.com/gorilla/mux",
+			"revision": "53c1911da2b537f792e7cafcb446b05ffe33b996",
+			"revisionTime": "2018-01-16T17:23:47Z",
+			"version": "v1.6.1",
+			"versionExact": "v1.6.1"
+		},
+		{
+			"checksumSHA1": "9w1ZtxhdB/J0qqNPJQNNI/ZTwwE=",
+			"path": "github.com/hashicorp/go-version",
+			"revision": "4fe82ae3040f80a03d04d2cccb5606a626b8e1ee",
+			"revisionTime": "2017-11-29T15:08:20Z"
+		},
+		{
+			"checksumSHA1": "VXXphnljpPAe7zkFllAl2m6nROg=",
+			"path": "github.com/jawher/mow.cli",
+			"revision": "0e80ee9f63156ea1954dc2375c33a1c7e752c25c",
+			"revisionTime": "2017-10-29T18:05:40Z",
+			"version": "v1.0.3",
+			"versionExact": "v1.0.3"
+		},
+		{
+			"checksumSHA1": "rJab1YdNhQooDiBWNnt7TLWPyBU=",
+			"path": "github.com/pkg/errors",
+			"revision": "f15c970de5b76fac0b59abb32d62c17cc7bed265",
+			"revisionTime": "2017-10-18T19:55:50Z"
+		},
+		{
+			"checksumSHA1": "ySaT8G3I3y4MmnoXOYAAX0rC+p8=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "d682213848ed68c0a260ca37d6dd5ace8423f5ba",
+			"revisionTime": "2017-12-05T20:32:29Z",
+			"version": "v1.0.4",
+			"versionExact": "v1.0.4"
+		},
+		{
+			"checksumSHA1": "uyVU5fRfEK17QZuODRjeZX8zDqg=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "87b1dfb5b2fa649f52695dd9eae19abe404a4308",
+			"revisionTime": "2017-12-31T12:27:32Z"
+		},
+		{
+			"checksumSHA1": "haazOUDtMbWrcmqagDwx8xG2Fus=",
+			"path": "github.com/stretchr/testify/mock",
+			"revision": "87b1dfb5b2fa649f52695dd9eae19abe404a4308",
+			"revisionTime": "2017-12-31T12:27:32Z"
+		}
+	],
+	"rootPath": "github.com/andreic92/configbuddy.v2"
+}
