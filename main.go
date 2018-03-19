@@ -3,6 +3,8 @@ package main
 import (
 	"os"
 
+	"github.com/andreic92/configbuddy.v2/model"
+
 	"github.com/andreic92/configbuddy.v2/executor"
 
 	"github.com/jawher/mow.cli"
@@ -26,14 +28,16 @@ func main() {
 func initApp() *cli.Cli {
 	app := cli.App(appSystemCode, appDescription)
 
-	configs := app.StringsOpt("c", []string{}, "The path for config files")
+	args := &model.Arguments{}
+	args.Configs = *app.StringsOpt("c", []string{}, "The path for config files")
+	args.BackupDirectory = *app.StringOpt("b", "", "The path for where the backup should be performed")
 
 	initLogging()
 
 	app.Action = func() {
 		log.Infof("Configbuddy started")
 
-		executor.StartConfiguring(*configs)
+		executor.StartConfiguring(args)
 	}
 
 	return app

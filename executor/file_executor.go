@@ -8,14 +8,16 @@ import (
 
 type fileExecutor struct {
 	fileAction *model.FileAction
+	args       *model.Arguments
 }
 
-func NewFileExecutor(fileAction *model.FileAction, fileName string) *fileExecutor {
+func NewFileExecutor(fileAction *model.FileAction, fileName string, args *model.Arguments) *fileExecutor {
 	if len(fileAction.FileName) == 0 {
 		fileAction.FileName = fileName
 	}
 	return &fileExecutor{
 		fileAction: fileAction,
+		args:       args,
 	}
 }
 

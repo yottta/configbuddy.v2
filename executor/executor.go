@@ -11,23 +11,23 @@ import (
 )
 
 type applicationExecutor struct {
-	givenConfigPaths []string
+	configs *model.Arguments
 }
 
-func StartConfiguring(configPaths []string) {
-	executor := &applicationExecutor{givenConfigPaths: configPaths}
+func StartConfiguring(config *model.Arguments) {
+	executor := &applicationExecutor{config}
 	executor.readConfigs()
 }
 
 func (a *applicationExecutor) readConfigs() {
-	if len(a.givenConfigPaths) == 0 {
+	if len(a.configs.Configs) == 0 {
 		log.Infof("No config files provided. Nothing to do here. Exit...")
 		return
 	}
 
 	var cfg *model.ConfigWrapper
 	var err error
-	for _, filePath := range a.givenConfigPaths {
+	for _, filePath := range a.configs.Configs {
 		cfg, err = loadConfig(cfg, filePath)
 		if err != nil {
 			log.WithError(err).Errorf("Error during validate %s", filePath)

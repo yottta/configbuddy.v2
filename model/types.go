@@ -30,6 +30,11 @@ type PackageAction struct {
 	Alternatives string `json:"alternatives"`
 }
 
+type Arguments struct {
+	Configs         []string
+	BackupDirectory string
+}
+
 func (w ConfigWrapper) String() string {
 	return fmt.Sprintf("{ (model.ConfigWrapper) ConfigFileDirectory: %s; ConfigFilePath: %s; Config: %s }",
 		w.ConfigFileDirectory,
