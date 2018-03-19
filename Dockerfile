@@ -13,6 +13,7 @@ WORKDIR ${workdir}
 RUN apt-get update
 RUN apt-get install -y vim
 RUN apt-get install -y git
+RUN echo "./configbuddy.v2 -c configs/v2/work.yml" >> /root/.bash_history
 
 COPY Dockerfile dotfiles* $workdir/
 ADD configbuddy.v2 $workdir
