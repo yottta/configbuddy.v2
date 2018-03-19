@@ -38,6 +38,11 @@ jobs:
           command: /go/bin/goveralls -coverprofile=${CIRCLE_COVERAGE_REPORT}/coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
       - store_test_results:
           path: /tmp/test-results
+      - run:
+          name: Cleanup the data for letting goreleaser to do it's work
+          command: |
+            git checkout -- vendor/vendor.json
+            rm configbuddy.v2
       - deploy:
           name: goreleaser
           command: |
