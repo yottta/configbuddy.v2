@@ -5,8 +5,6 @@ import (
 
 	"github.com/andreic92/configbuddy.v2/executor"
 
-	"github.com/andreic92/configbuddy.v2/context"
-
 	"github.com/jawher/mow.cli"
 	log "github.com/sirupsen/logrus"
 )
@@ -34,13 +32,8 @@ func initApp() *cli.Cli {
 
 	app.Action = func() {
 		log.Infof("Configbuddy started")
-		ctx := &context.ApplicationContext{
-			Configs: *configs,
-			Data:    make(map[string]interface{}),
-		}
-		context.InitContext(ctx)
 
-		executor.StartConfiguring(ctx)
+		executor.StartConfiguring(*configs)
 	}
 
 	return app

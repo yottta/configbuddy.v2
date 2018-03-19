@@ -7,39 +7,33 @@ import (
 	"github.com/andreic92/configbuddy.v2/model"
 	"github.com/ghodss/yaml"
 
-	"github.com/andreic92/configbuddy.v2/context"
 	log "github.com/sirupsen/logrus"
 )
 
-type Executor interface {
-	readConfigs()
-}
-
 type applicationExecutor struct {
-	context context.Context
+	givenConfigPaths []string
 }
 
-func StartConfiguring(ctx context.Context) {
-	executor := &applicationExecutor{context: ctx}
+func StartConfiguring(configPaths []string) {
+	executor := &applicationExecutor{givenConfigPaths: configPaths}
 	executor.readConfigs()
 }
 
 func (a *applicationExecutor) readConfigs() {
-	if len(a.context.ConfigsPaths()) == 0 {
+	if len(a.givenConfigPaths) == 0 {
 		log.Infof("No config files provided. Nothing to do here. Exit...")
 		return
 	}
 
 	var cfg *model.ConfigWrapper
 	var err error
-	for _, filePath := range a.context.ConfigsPaths() {
+	for _, filePath := range a.givenConfigPaths {
 		cfg, err = loadConfig(cfg, filePath)
 		if err != nil {
 			log.WithError(err).Errorf("Error during validate %s", filePath)
 			return
 		}
 	}
-	a.context.StoreData(context.ParsedConfigDataKey, cfg)
 }
 
 func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.ConfigWrapper, error) {
