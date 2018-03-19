@@ -48,12 +48,9 @@ workflows:
   version: 2
   test-and-build-docker:
     jobs:
-      - build
-  tagged-build:
-    jobs:
       - build:
-          filters:
-            branches:
-              ignore: /.*/
-        tags:
-          only: /^v.*/
+        filters:
+          branches:
+            only: /.*/
+          tags:
+            only: /^v.*/
