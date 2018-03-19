@@ -46,11 +46,17 @@ jobs:
             fi
 workflows:
   version: 2
-  test-and-build-docker:
+  un-tagged-build:
     jobs:
       - build:
-        filters:
-          branches:
-            only: /.*/
-          tags:
-            only: /^v.*/
+          filters:
+            tags:
+              ignore: /^v.*/
+  tagged-build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
