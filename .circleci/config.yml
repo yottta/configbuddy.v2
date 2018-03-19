@@ -49,7 +49,11 @@ workflows:
   test-and-build-docker:
     jobs:
       - build
-      
-deployment:
-  trigger_tag:
-    tag: /.*/
+  tagged-build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+	    tags:
+	      only: /^v.*/
