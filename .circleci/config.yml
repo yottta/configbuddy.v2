@@ -38,8 +38,18 @@ jobs:
           command: /go/bin/goveralls -coverprofile=${CIRCLE_COVERAGE_REPORT}/coverage.out -service=circle-ci -repotoken=$COVERALLS_TOKEN
       - store_test_results:
           path: /tmp/test-results
+      - deploy:
+          name: goreleaser
+          command: |
+            if [[ -n ${CIRCLE_TAG} ]]; then
+              curl -sL https://git.io/goreleaser | bash
+            fi
 workflows:
   version: 2
   test-and-build-docker:
     jobs:
       - build
+      
+deployment:
+  trigger_tag:
+    tag: /.*/
