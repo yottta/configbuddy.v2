@@ -3,6 +3,8 @@ package executor
 import (
 	"fmt"
 
+	"github.com/andreic92/configbuddy.v2/parser"
+
 	"github.com/andreic92/configbuddy.v2/model"
 )
 
@@ -21,13 +23,22 @@ func NewFileExecutor(fileAction *model.FileAction, fileName string, args *model.
 	}
 }
 
-func (f *fileExecutor) Execute() error {
+func (f *fileExecutor) Execute(parse parser.Parser) error {
 	if f.fileAction == nil {
 		return fmt.Errorf("No file action provided")
 	}
 
-	// source := f.fileAction.Source
-	// fileName := f.fileAction.FileName
+	// fullPath := fmt.Sprintf("%s/%s", f.fileAction.Source, f.fileAction.FileName)
+	// command := f.fileAction.Command
+	// destination := f.fileAction.Destination
+	destination, err := parse.Parse(f.fileAction.Destination)
+	if err != nil {
+		return err
+	}
+	if destination[len(destination)-1:] != "/" {
+		destination = destination + "/"
+	}
+	fmt.Println(destination)
 
 	return nil
 }

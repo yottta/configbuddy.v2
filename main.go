@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/andreic92/configbuddy.v2/model"
+	"github.com/andreic92/configbuddy.v2/parser"
 
 	"github.com/andreic92/configbuddy.v2/executor"
 
@@ -28,16 +29,26 @@ func main() {
 func initApp() *cli.Cli {
 	app := cli.App(appSystemCode, appDescription)
 
-	args := &model.Arguments{}
-	args.Configs = *app.StringsOpt("c", []string{}, "The path for config files")
-	args.BackupDirectory = *app.StringOpt("b", "", "The path for where the backup should be performed")
+	configs := app.StringsOpt("c", []string{}, "The path for config files")
+	backupDirectory := app.StringOpt("b", "", "The path where the backup should be performed")
 
 	initLogging()
 
 	app.Action = func() {
 		log.Infof("Configbuddy started")
 
-		executor.StartConfiguring(args)
+		args := &model.Arguments{
+			Configs:         *configs,
+			BackupDirectory: *backupDirectory,
+		}
+		parser, err := parser.NewParser()
+		if err != nil {
+			log.Error("Could not create the parser instance")
+		}
+		err = executor.StartConfiguring(args, parser)
+		if err != nil {
+			log.WithError(err).Error("Error during configuration process")
+		}
 	}
 
 	return app
