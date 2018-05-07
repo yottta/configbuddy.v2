@@ -33,6 +33,7 @@ type PackageAction struct {
 type Arguments struct {
 	Configs         []string
 	BackupDirectory string
+	BackupActivated bool
 }
 
 func (w ConfigWrapper) String() string {

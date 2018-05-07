@@ -2,10 +2,10 @@ package executor
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/andreic92/configbuddy.v2/backup"
 	"github.com/andreic92/configbuddy.v2/model"
 	"github.com/andreic92/configbuddy.v2/parser"
 	"github.com/ghodss/yaml"
@@ -14,13 +14,14 @@ import (
 )
 
 type applicationExecutor struct {
-	configs   *model.Arguments
-	parser    parser.Parser
-	finalConf *model.ConfigWrapper
+	configs       *model.Arguments
+	parser        parser.Parser
+	finalConf     *model.ConfigWrapper
+	backupService backup.BackupService
 }
 
-func StartConfiguring(config *model.Arguments, parse parser.Parser) (err error) {
-	executor := &applicationExecutor{configs: config, parser: parse}
+func StartConfiguring(config *model.Arguments, parse parser.Parser, backupService backup.BackupService) (err error) {
+	executor := &applicationExecutor{configs: config, parser: parse, backupService: backupService}
 	err = executor.readConfigs()
 	if err != nil {
 		return
@@ -39,18 +40,20 @@ func StartConfiguring(config *model.Arguments, parse parser.Parser) (err error) 
 }
 
 func (a *applicationExecutor) executePackages() (err error) {
-	dat, err := json.Marshal(a.finalConf)
+	_, err = json.Marshal(a.finalConf)
 	if err != nil {
 		return
 	}
-	fmt.Printf("%s\n", dat)
 	return
 }
 
 func (a *applicationExecutor) executeFiles() (err error) {
 	for name, act := range a.finalConf.Config.FileActions {
 		fileExecutor := NewFileExecutor(&act, name, a.configs)
-		fileExecutor.Execute(a.parser)
+		err := fileExecutor.Execute(a.parser, a.backupService)
+		if err != nil {
+			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+		}
 	}
 	return
 }
@@ -81,21 +84,19 @@ func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.Co
 	}
 	if appendToThis == nil {
 		appendToThis = cfg
-	} else {
-		for key, val := range cfg.Config.FileActions {
-			abs, err := filepath.Abs(cfg.ConfigFileDirectory + "/" + val.Source)
-			if err != nil {
-				return nil, err
-			}
-			val.Source = abs
-			appendToThis.Config.FileActions[key] = val
+		err = appendActionsToGlobalConfig(cfg, appendToThis)
+		if err != nil {
+			return nil, err
 		}
-		for key, val := range cfg.Config.PackageActions {
-			appendToThis.Config.PackageActions[key] = val
+	} else {
+		err = appendActionsToGlobalConfig(cfg, appendToThis)
+		if err != nil {
+			return nil, err
 		}
 	}
 
 	for _, includeFile := range cfg.Config.Includes {
+		log.WithField("file", includeFile).Debug("include config")
 		_, err := loadConfig(appendToThis, cfg.ConfigFileDirectory+"/"+includeFile)
 		if err != nil {
 			return nil, err
@@ -105,12 +106,31 @@ func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.Co
 	return cfg, nil
 }
 
+func appendActionsToGlobalConfig(cfg *model.ConfigWrapper, appendToThis *model.ConfigWrapper) error {
+	// file actions
+	for key, val := range cfg.Config.FileActions {
+		abs, err := filepath.Abs(cfg.ConfigFileDirectory + "/" + val.Source)
+		if err != nil {
+			return err
+		}
+		val.Source = abs
+		appendToThis.Config.FileActions[key] = val
+	}
+
+	// package actions
+	for key, val := range cfg.Config.PackageActions {
+		appendToThis.Config.PackageActions[key] = val
+	}
+	return nil
+}
+
 func readFile(filePath string) (*model.ConfigWrapper, error) {
 	abs, err := filepath.Abs(filePath)
 	if err != nil {
 		return nil, err
 	}
 
+	log.WithField("file", abs).Debug("reading file")
 	bytes, err := ioutil.ReadFile(abs)
 	if err != nil {
 		return nil, err

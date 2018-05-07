@@ -5,6 +5,8 @@ import (
 	"os/user"
 	"strings"
 	"text/template"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -23,19 +25,20 @@ type defaultParser struct {
 }
 
 func NewParser() (Parser, error) {
-	parser := &defaultParser{}
-
-	dat := make(map[string]string)
+	parser := &defaultParser{
+		parsingData: make(map[string]string),
+	}
 
 	usr, err := user.Current()
 	if err != nil {
 		return nil, err
 	}
 
-	dat[homePlaceholder] = usr.HomeDir
-	dat[userPlaceholder] = usr.Username
+	parser.parsingData[homePlaceholder] = usr.HomeDir
+	parser.parsingData[userPlaceholder] = usr.Username
 
-	parser.parsingData = dat
+	log.WithField("parsing data", parser.parsingData).
+		Debug("parsing data processed")
 
 	return parser, nil
 }

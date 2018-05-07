@@ -7,8 +7,8 @@ ENV dotfiles ${workdir}/dotfiles
 
 # workdir
 WORKDIR ${workdir}
-COPY dotfiles* $workdir/
-RUN echo "./configbuddy.v2 -c configs/v2/work.yml" >> /root/.bash_history
+ADD ./dotfiles $workdir/dotfiles
+RUN echo "./configbuddy.v2 -c dotfiles/configs/v2/work.yml -l debug" >> /root/.bash_history
 
 # setup
 ADD . $configbuddy_app
