@@ -1,6 +1,7 @@
 package backup
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -95,7 +96,50 @@ func TestBackupBakFileEmptyResourceName(t *testing.T) {
 
 	res := bakServ.Backup(testFile)
 	assert.Error(res.Error)
+	assert.Contains(res.Error.Error(), "path cannot be empty")
 	assert.False(res.Performed)
+}
+
+func TestBackupErrorFromStrategy(t *testing.T) {
+	assert := ast.New(t)
+	assert.True(true)
+
+	bakServ := defaultBackupService{
+		backupActivated: true,
+		backupDirectory: "",
+		backupStrategy:  &mockExtractErrorFileStrategy{},
+	}
+
+	testFile := "test_file"
+	_, err := os.Create(testFile)
+	assert.NoError(err)
+
+	res := bakServ.Backup(testFile)
+	assert.Error(res.Error)
+	assert.Contains(res.Error.Error(), "mock error")
+	assert.False(res.Performed)
+}
+
+func TestBackupOverAlreadyExistingFile(t *testing.T) {
+	assert := ast.New(t)
+	assert.True(true)
+
+	testFile := "test_file"
+	bakServ := defaultBackupService{
+		backupActivated: true,
+		backupDirectory: "",
+		backupStrategy:  &mockExtractAlreadyExistingFileStrategy{alreadyExistingFilePath: testFile},
+	}
+
+	_, err := os.Create(testFile)
+	assert.NoError(err)
+
+	res := bakServ.Backup(testFile)
+	assert.Error(res.Error)
+	assert.Contains(res.Error.Error(), "exit status 1")
+	assert.False(res.Performed)
+
+	deleteResource(assert, testFile)
 }
 
 func assertFile(assert *ast.Assertions, filePath string) {
@@ -123,4 +167,19 @@ func assertDir(assert *ast.Assertions, filePath string) {
 
 func deleteResource(assert *ast.Assertions, path string) {
 	assert.NoError(os.RemoveAll(path))
+}
+
+type mockExtractErrorFileStrategy struct {
+}
+
+func (m *mockExtractErrorFileStrategy) extractTargetPath(resourcePath string) (string, error) {
+	return "", fmt.Errorf("mock error")
+}
+
+type mockExtractAlreadyExistingFileStrategy struct {
+	alreadyExistingFilePath string
+}
+
+func (m *mockExtractAlreadyExistingFileStrategy) extractTargetPath(resourcePath string) (string, error) {
+	return m.alreadyExistingFilePath, nil
 }
