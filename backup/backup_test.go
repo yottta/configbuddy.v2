@@ -60,6 +60,33 @@ func TestBackupBakFile(t *testing.T) {
 	deleteResource(assert, res.FinalPath)
 }
 
+func TestBackupDirectoryBak(t *testing.T) {
+	assert := ast.New(t)
+	assert.True(true)
+
+	bakDirectory := "bakDirectory"
+	err := os.MkdirAll(bakDirectory, os.ModePerm)
+	assert.NoError(err)
+
+	params := &model.Arguments{
+		BackupActivated: true,
+		BackupDirectory: bakDirectory,
+	}
+	bakServ, err := NewBackupService(params)
+	assert.NoError(err)
+	assert.NotNil(bakServ)
+
+	testFile := "test_file"
+	_, err = os.Create(testFile)
+	assert.NoError(err)
+
+	res := bakServ.Backup(testFile)
+	assert.NoError(res.Error)
+	assert.True(res.Performed)
+	assertFile(assert, res.FinalPath)
+	deleteResource(assert, bakDirectory)
+}
+
 func TestBackupBakFileNonExistentSource(t *testing.T) {
 	assert := ast.New(t)
 	assert.True(true)
