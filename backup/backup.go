@@ -22,6 +22,10 @@ const (
 	backupStrategyCopyToDirectory backupStrategy = 2
 )
 
+var (
+	blacklistForSource = []string{"/", "/root", "/home"}
+)
+
 type defaultBackupService struct {
 	backupStrategy  backupStrategier
 	backupDirectory string
@@ -64,6 +68,15 @@ func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
 		}
 	}
 	sourceAbsPath, err := filepath.Abs(resourcePath)
+	if err != nil {
+		return BackupResult{
+			Performed: false,
+			Error:     err,
+		}
+	}
+
+	// check if the source is blacklisted
+	err = checkIfBlacklisted(sourceAbsPath)
 	if err != nil {
 		return BackupResult{
 			Performed: false,
@@ -125,4 +138,13 @@ func checkDirectory(directory string) error {
 	default:
 		return fmt.Errorf("Given path (%s) is not a directory", directory)
 	}
+}
+
+func checkIfBlacklisted(path string) error {
+	for _, blacklistResource := range blacklistForSource {
+		if strings.EqualFold(blacklistResource, path) {
+			return fmt.Errorf("Resource %s cannot be processed. This is a blacklisted item", path)
+		}
+	}
+	return nil
 }

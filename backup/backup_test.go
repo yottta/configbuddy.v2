@@ -169,6 +169,26 @@ func TestBackupOverAlreadyExistingFile(t *testing.T) {
 	deleteResource(assert, testFile)
 }
 
+func TestBackupBakFileBlacklist(t *testing.T) {
+	assert := ast.New(t)
+	assert.True(true)
+
+	params := &model.Arguments{
+		BackupActivated: true,
+		BackupDirectory: "",
+	}
+	bakServ, err := NewBackupService(params)
+	assert.NoError(err)
+	assert.NotNil(bakServ)
+
+	for _, blacklistedResource := range blacklistForSource {
+		res := bakServ.Backup(blacklistedResource)
+		assert.Error(res.Error)
+		assert.Contains(res.Error.Error(), "This is a blacklisted item")
+		assert.False(res.Performed)
+	}
+}
+
 func assertFile(assert *ast.Assertions, filePath string) {
 	fi, err := os.Stat(filePath)
 	assert.NoError(err)
