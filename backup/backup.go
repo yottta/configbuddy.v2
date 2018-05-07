@@ -58,6 +58,11 @@ func NewBackupService(config *model.Arguments) (BackupService, error) {
 }
 
 func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
+	if len(resourcePath) == 0 {
+		return BackupResult{
+			Error: fmt.Errorf("Resource path cannot be empty"),
+		}
+	}
 	sourceAbsPath, err := filepath.Abs(resourcePath)
 	if err != nil {
 		return BackupResult{
