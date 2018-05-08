@@ -1,7 +1,6 @@
 package executor
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
 
@@ -39,25 +38,6 @@ func StartConfiguring(config *model.Arguments, parse parser.Parser, backupServic
 	return nil
 }
 
-func (a *applicationExecutor) executePackages() (err error) {
-	_, err = json.Marshal(a.finalConf)
-	if err != nil {
-		return
-	}
-	return
-}
-
-func (a *applicationExecutor) executeFiles() (err error) {
-	for name, act := range a.finalConf.Config.FileActions {
-		fileExecutor := NewFileExecutor(&act, name, a.configs)
-		err := fileExecutor.Execute(a.parser, a.backupService)
-		if err != nil {
-			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
-		}
-	}
-	return
-}
-
 func (a *applicationExecutor) readConfigs() (err error) {
 	if len(a.configs.Configs) == 0 {
 		log.Infof("No config files provided. Nothing to do here. Exit...")
@@ -74,6 +54,25 @@ func (a *applicationExecutor) readConfigs() (err error) {
 	}
 
 	a.finalConf = cfg
+	return
+}
+
+func (a *applicationExecutor) executePackages() (err error) {
+	return
+}
+
+func (a *applicationExecutor) executeFiles() (err error) {
+	for name, act := range a.finalConf.Config.FileActions {
+		fileExecutor, err := NewFileExecutor(&act, name, a.configs, a.parser, a.backupService)
+		if err != nil {
+			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+			continue
+		}
+		err = fileExecutor.Execute()
+		if err != nil {
+			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+		}
+	}
 	return
 }
 
@@ -108,6 +107,9 @@ func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.Co
 
 func appendActionsToGlobalConfig(cfg *model.ConfigWrapper, appendToThis *model.ConfigWrapper) error {
 	// file actions
+	if appendToThis.Config.FileActions == nil {
+		appendToThis.Config.FileActions = make(map[string]model.FileAction)
+	}
 	for key, val := range cfg.Config.FileActions {
 		abs, err := filepath.Abs(cfg.ConfigFileDirectory + "/" + val.Source)
 		if err != nil {
@@ -118,6 +120,9 @@ func appendActionsToGlobalConfig(cfg *model.ConfigWrapper, appendToThis *model.C
 	}
 
 	// package actions
+	if appendToThis.Config.PackageActions == nil {
+		appendToThis.Config.PackageActions = make(map[string]model.PackageAction)
+	}
 	for key, val := range cfg.Config.PackageActions {
 		appendToThis.Config.PackageActions[key] = val
 	}

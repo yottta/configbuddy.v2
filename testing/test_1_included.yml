@@ -1,0 +1,9 @@
+FileAction:
+  test_1_included_conf_file:
+    hidden: true
+    command: ln -s
+    destination: ./
+
+PackageAction:
+  i3:
+    alternatives: i3-wm

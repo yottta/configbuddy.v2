@@ -1,0 +1,13 @@
+Globals:
+  exitOnError: true
+  confirmEveryPackage: true
+
+includes:
+  - dummy_file.yml
+
+FileAction:
+  test_1_conf_file:
+    hidden: true
+    source: ./
+    command: ln -s
+    destination: ./

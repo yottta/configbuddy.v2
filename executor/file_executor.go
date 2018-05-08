@@ -12,41 +12,81 @@ import (
 	"github.com/andreic92/configbuddy.v2/model"
 )
 
-type fileExecutor struct {
+type FileExecutor struct {
 	fileAction *model.FileAction
 	args       *model.Arguments
+
+	backupService backup.BackupService
+	parser        parser.Parser
+
+	fullPath         string
+	finalDestination string
 }
 
-func NewFileExecutor(fileAction *model.FileAction, fileName string, args *model.Arguments) *fileExecutor {
+func NewFileExecutor(fileAction *model.FileAction,
+	fileName string,
+	args *model.Arguments,
+	parse parser.Parser,
+	backupService backup.BackupService) (*FileExecutor, error) {
 	if len(fileAction.FileName) == 0 {
 		fileAction.FileName = fileName
 	}
-	return &fileExecutor{
+
+	// source path
+	var fullPath string
+	if len(fileAction.Source) > 0 {
+		fullPath = fmt.Sprintf("%s/%s", fileAction.Source, fileAction.FileName)
+	} else {
+		fullPath = fmt.Sprintf("%s", fileAction.FileName)
+	}
+
+	// target path
+	finalDestination, err := getFinalDestination(parse, fileAction)
+	if err != nil {
+		return nil, err
+	}
+
+	return &FileExecutor{
 		fileAction: fileAction,
 		args:       args,
-	}
+
+		backupService: backupService,
+		parser:        parse,
+
+		fullPath:         fullPath,
+		finalDestination: finalDestination,
+	}, nil
 }
 
-func (f *fileExecutor) Execute(parse parser.Parser, backupService backup.BackupService) error {
+func (f *FileExecutor) Execute() (err error) {
 	if f.fileAction == nil {
-		return fmt.Errorf("No file action provided")
+		err = fmt.Errorf("No file action provided")
+		return
 	}
 
-	command := f.fileAction.Command
-	fullPath := fmt.Sprintf("%s/%s", f.fileAction.Source, f.fileAction.FileName)
-
-	finalDestination, err := getFinalDestination(parse, f.fileAction)
+	err = f.createDirectoriesStructure()
 	if err != nil {
 		return err
 	}
 
-	if err := os.MkdirAll(path.Dir(finalDestination), os.ModePerm); err != nil {
+	err = f.backup()
+	if err != nil {
 		return err
 	}
-	if res := backupService.Backup(finalDestination); res.Error != nil {
-		return res.Error
-	}
-	return utils.ExecuteCommand(fmt.Sprintf("%s %s %s", command, fullPath, finalDestination))
+
+	return utils.ExecuteCommand(f.getCommand())
+}
+
+func (f *FileExecutor) getCommand() string {
+	return fmt.Sprintf("%s %s %s", f.fileAction.Command, f.fullPath, f.finalDestination)
+}
+
+func (f *FileExecutor) backup() error {
+	return f.backupService.Backup(f.finalDestination).Error
+}
+
+func (f *FileExecutor) createDirectoriesStructure() error {
+	return os.MkdirAll(path.Dir(f.finalDestination), os.ModePerm)
 }
 
 func getFinalDestination(parse parser.Parser, fileAction *model.FileAction) (string, error) {
