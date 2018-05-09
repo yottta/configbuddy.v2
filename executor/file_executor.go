@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/andreic92/configbuddy.v2/backup"
 	"github.com/andreic92/configbuddy.v2/parser"
@@ -102,5 +103,5 @@ func getFinalDestination(parse parser.Parser, fileAction *model.FileAction) (str
 		finalFileName = "." + finalFileName
 	}
 	finalDestination := destination + finalFileName
-	return finalDestination, nil
+	return filepath.Abs(finalDestination)
 }

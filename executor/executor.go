@@ -3,6 +3,7 @@ package executor
 import (
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/andreic92/configbuddy.v2/backup"
 	"github.com/andreic92/configbuddy.v2/model"
@@ -116,6 +117,9 @@ func appendActionsToGlobalConfig(cfg *model.ConfigWrapper, appendToThis *model.C
 			return err
 		}
 		val.Source = abs
+		if strings.HasPrefix(val.Destination, ".") { // if the destination path is relative
+			val.Destination = cfg.ConfigFileDirectory + "/" + val.Destination
+		}
 		appendToThis.Config.FileActions[key] = val
 	}
 

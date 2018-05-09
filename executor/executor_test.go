@@ -1,7 +1,14 @@
 package executor
 
 import (
+	"bytes"
+	"html/template"
+	"os"
+	"strings"
 	"testing"
+
+	"github.com/andreic92/configbuddy.v2/backup"
+	"github.com/andreic92/configbuddy.v2/parser"
 
 	"github.com/andreic92/configbuddy.v2/model"
 
@@ -134,4 +141,74 @@ func TestReadConfigs(t *testing.T) {
 	assert.Error(err)
 	assert.Contains(err.Error(), "no such file or directory")
 	assert.Nil(executor.finalConf)
+}
+
+func TestStartConfiguring(t *testing.T) {
+	assert := ast.New(t)
+
+	err := StartConfiguring(mockApplicationParameters([]string{directoryWithTestingFiles + "/test_invalid_file.yml"}), doMockParser(), &mockBackupService{})
+	assert.Error(err)
+	assert.Contains(err.Error(), "error unmarshaling JSON")
+
+	err = StartConfiguring(mockApplicationParameters([]string{directoryWithTestingFiles + "/test1.yml"}), doMockParser(), &mockBackupService{})
+	assert.NoError(err)
+	assertFile(assert, directoryWithTestingFiles+"/.test_1_conf_file")
+	assertFile(assert, directoryWithTestingFiles+"/.test_1_included_conf_file")
+
+	deleteResource(assert, directoryWithTestingFiles+"/.test_1_conf_file")
+	deleteResource(assert, directoryWithTestingFiles+"/.test_1_included_conf_file")
+}
+
+func deleteResource(assert *ast.Assertions, path string) {
+	assert.NoError(os.RemoveAll(path))
+}
+
+func assertFile(assert *ast.Assertions, filePath string) {
+	fi, err := os.Stat(filePath)
+	assert.NoError(err)
+	assert.NotNil(fi)
+
+	assert.False(fi.IsDir())
+}
+
+func mockApplicationParameters(configFiles []string) *model.Arguments {
+	return &model.Arguments{
+		Configs: configFiles,
+	}
+}
+
+type mockBackupService struct {
+}
+
+func (m *mockBackupService) Backup(path string) backup.BackupResult {
+	return backup.BackupResult{}
+}
+
+type mockParser struct {
+	parsingData map[string]string
+}
+
+func doMockParser() parser.Parser {
+	parser := &mockParser{
+		parsingData: make(map[string]string),
+	}
+
+	parser.parsingData["HOME"] = directoryWithTestingFiles
+	parser.parsingData["USER"] = "test_username"
+
+	return parser
+}
+
+func (d *mockParser) Parse(val string) (string, error) {
+	t, err := template.New("").Delims("$#", "#$").Parse(strings.Replace(val, "$#", "$#.", -1))
+	if err != nil {
+		return "", err
+	}
+
+	var bytes bytes.Buffer
+	err = t.Execute(&bytes, d.parsingData)
+	if err != nil {
+		return "", err
+	}
+	return bytes.String(), nil
 }

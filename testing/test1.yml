@@ -10,4 +10,4 @@ FileAction:
     hidden: true
     source: ./
     command: ln -s
-    destination: ./
+    destination: $#HOME#$

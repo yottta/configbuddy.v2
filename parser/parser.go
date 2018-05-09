@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	homePlaceholder           = "HOME"
-	userPlaceholder           = "USER"
-	distroPlaceholder         = "DISTRO"
-	packageManagerPlaceholder = "PCK_MANAGER"
+	HomePlaceholder           = "HOME"
+	UserPlaceholder           = "USER"
+	DistroPlaceholder         = "DISTRO"
+	PackageManagerPlaceholder = "PCK_MANAGER"
 )
 
 type Parser interface {
@@ -34,8 +34,8 @@ func NewParser() (Parser, error) {
 		return nil, err
 	}
 
-	parser.parsingData[homePlaceholder] = usr.HomeDir
-	parser.parsingData[userPlaceholder] = usr.Username
+	parser.parsingData[HomePlaceholder] = usr.HomeDir
+	parser.parsingData[UserPlaceholder] = usr.Username
 
 	log.WithField("parsing data", parser.parsingData).
 		Debug("parsing data processed")
