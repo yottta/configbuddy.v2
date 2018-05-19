@@ -14,6 +14,9 @@ const (
 	UserPlaceholder           = "USER"
 	DistroPlaceholder         = "DISTRO"
 	PackageManagerPlaceholder = "PCK_MANAGER"
+
+	defaultParserPrefix = "$#"
+	defaultParserSuffix = "#$"
 )
 
 type Parser interface {
@@ -44,7 +47,8 @@ func NewParser() (Parser, error) {
 }
 
 func (d *defaultParser) Parse(val string) (string, error) {
-	t, err := template.New("").Delims("$#", "#$").Parse(strings.Replace(val, "$#", "$#.", -1))
+	preparedValue := strings.Replace(val, defaultParserPrefix, defaultParserPrefix+".", -1)
+	t, err := template.New("").Delims(defaultParserPrefix, defaultParserSuffix).Parse(preparedValue)
 	if err != nil {
 		return "", err
 	}
