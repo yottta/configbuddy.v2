@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/andreic92/configbuddy.v2/backup"
 	"github.com/andreic92/configbuddy.v2/parser"
@@ -36,9 +37,9 @@ func NewFileExecutor(fileAction *model.FileAction,
 	// source path
 	var fullPath string
 	if len(fileAction.Source) > 0 {
-		fullPath = fmt.Sprintf("%s/%s", fileAction.Source, fileAction.FileName)
+		fullPath = fmt.Sprintf("%s/%s", strings.TrimRight(fileAction.Source, "/"), fileAction.FileName)
 	} else {
-		fullPath = fmt.Sprintf("%s", fileAction.FileName)
+		fullPath = fmt.Sprintf("./%s", fileAction.FileName)
 	}
 
 	// target path
@@ -60,11 +61,6 @@ func NewFileExecutor(fileAction *model.FileAction,
 }
 
 func (f *FileExecutor) Execute() (err error) {
-	if f.fileAction == nil {
-		err = fmt.Errorf("No file action provided")
-		return
-	}
-
 	err = f.createDirectoriesStructure()
 	if err != nil {
 		return err
@@ -91,6 +87,9 @@ func (f *FileExecutor) createDirectoriesStructure() error {
 }
 
 func getFinalDestination(parse parser.Parser, fileAction *model.FileAction) (string, error) {
+	if len(fileAction.Destination) == 0 {
+		return "", fmt.Errorf("No destination defined for %s", fileAction.FileName)
+	}
 	destination, err := parse.Parse(fileAction.Destination)
 	if err != nil {
 		return "", err
