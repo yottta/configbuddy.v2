@@ -75,7 +75,7 @@ func TestNewFileExecutor(t *testing.T) {
 	}
 
 	for _, testCase := range testSuite {
-		fileExecutor, err := NewFileExecutor(&testCase.fileAction, testCase.fileAction.FileName, &dummyArguments, parser, &mockNoActionBackup{})
+		fileExecutor, err := newFileExecutor(&testCase.fileAction, testCase.fileAction.FileName, &dummyArguments, parser, &mockNoActionBackup{})
 		if len(testCase.expectedErrorMsgSnapshot) == 0 {
 			assert.NoError(err, fmt.Sprintf("%s -> no error expected", testCase.testName))
 			assert.NotNil(fileExecutor, fmt.Sprintf("%s -> file executor expeccted", testCase.testName))

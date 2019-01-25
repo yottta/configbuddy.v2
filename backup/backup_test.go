@@ -5,14 +5,35 @@ import (
 	"os"
 	"testing"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/andreic92/configbuddy.v2/model"
 
 	ast "github.com/stretchr/testify/assert"
 )
 
+const (
+	testingDirectory = "testing_resource"
+)
+
+func TestMain(m *testing.M) {
+	os.RemoveAll(testingDirectory)
+	err := os.Mkdir(testingDirectory, os.ModePerm)
+	if err != nil {
+		log.WithError(err).Error("Couldn't create testing directory")
+		os.Exit(1)
+	}
+	code := m.Run()
+	err = os.RemoveAll(testingDirectory)
+	if err != nil {
+		log.WithError(err).Error("Couldn't clean up the testing directory")
+		os.Exit(2)
+	}
+	os.Exit(code)
+}
+
 func TestNewService(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	params := &model.Arguments{
 		BackupActivated: true,
@@ -39,7 +60,6 @@ func TestNewService(t *testing.T) {
 
 func TestBackupBakFile(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	params := &model.Arguments{
 		BackupActivated: true,
@@ -49,20 +69,17 @@ func TestBackupBakFile(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(bakServ)
 
-	testFile := "test_file"
+	testFile := testingDirectory + "/test_file"
 	_, err = os.Create(testFile)
 	assert.NoError(err)
 
 	res := bakServ.Backup(testFile)
 	assert.NoError(res.Error)
 	assert.True(res.Performed)
-	assertFile(assert, res.FinalPath)
-	deleteResource(assert, res.FinalPath)
 }
 
 func TestBackupDirectoryBak(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	bakDirectory := "bakDirectory"
 	err := os.MkdirAll(bakDirectory, os.ModePerm)
@@ -76,20 +93,18 @@ func TestBackupDirectoryBak(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(bakServ)
 
-	testFile := "test_file"
+	testFile := testingDirectory + "/test_file"
 	_, err = os.Create(testFile)
 	assert.NoError(err)
 
 	res := bakServ.Backup(testFile)
 	assert.NoError(res.Error)
 	assert.True(res.Performed)
-	assertFile(assert, res.FinalPath)
 	deleteResource(assert, bakDirectory)
 }
 
 func TestBackupBakFileNonExistentSource(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	params := &model.Arguments{
 		BackupActivated: true,
@@ -99,17 +114,15 @@ func TestBackupBakFileNonExistentSource(t *testing.T) {
 	assert.NoError(err)
 	assert.NotNil(bakServ)
 
-	testFile := "test_file"
+	testFile := testingDirectory + "/test_file2"
 
 	res := bakServ.Backup(testFile)
 	assert.NoError(res.Error)
 	assert.False(res.Performed)
-	assertNoFile(assert, res.FinalPath)
 }
 
 func TestBackupBakFileEmptyResourceName(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	params := &model.Arguments{
 		BackupActivated: true,
@@ -129,7 +142,6 @@ func TestBackupBakFileEmptyResourceName(t *testing.T) {
 
 func TestBackupErrorFromStrategy(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	bakServ := defaultBackupService{
 		backupActivated: true,
@@ -137,7 +149,7 @@ func TestBackupErrorFromStrategy(t *testing.T) {
 		backupStrategy:  &mockExtractErrorFileStrategy{},
 	}
 
-	testFile := "test_file"
+	testFile := testingDirectory + "/test_file"
 	_, err := os.Create(testFile)
 	assert.NoError(err)
 
@@ -149,9 +161,8 @@ func TestBackupErrorFromStrategy(t *testing.T) {
 
 func TestBackupOverAlreadyExistingFile(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
-	testFile := "test_file"
+	testFile := testingDirectory + "/test_file"
 	bakServ := defaultBackupService{
 		backupActivated: true,
 		backupDirectory: "",
@@ -171,7 +182,6 @@ func TestBackupOverAlreadyExistingFile(t *testing.T) {
 
 func TestBackupBakFileBlacklist(t *testing.T) {
 	assert := ast.New(t)
-	assert.True(true)
 
 	params := &model.Arguments{
 		BackupActivated: true,
