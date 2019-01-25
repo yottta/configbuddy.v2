@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/ghodss/yaml"
+	log "github.com/sirupsen/logrus"
+
 	"github.com/andreic92/configbuddy.v2/backup"
 	"github.com/andreic92/configbuddy.v2/model"
 	"github.com/andreic92/configbuddy.v2/parser"
-	"github.com/ghodss/yaml"
-
-	log "github.com/sirupsen/logrus"
 )
 
 type applicationExecutor struct {
@@ -64,12 +64,12 @@ func (a *applicationExecutor) executePackages() (err error) {
 
 func (a *applicationExecutor) executeFiles() (err error) {
 	for name, act := range a.finalConf.Config.FileActions {
-		fileExecutor, err := NewFileExecutor(&act, name, a.configs, a.parser, a.backupService)
+		fileExecutor, err := newFileExecutor(&act, name, a.configs, a.parser, a.backupService)
 		if err != nil {
 			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
 			continue
 		}
-		err = fileExecutor.Execute()
+		err = fileExecutor.execute()
 		if err != nil {
 			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
 		}

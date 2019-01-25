@@ -8,10 +8,9 @@ import (
 	"strings"
 
 	"github.com/andreic92/configbuddy.v2/backup"
+	"github.com/andreic92/configbuddy.v2/model"
 	"github.com/andreic92/configbuddy.v2/parser"
 	"github.com/andreic92/configbuddy.v2/utils"
-
-	"github.com/andreic92/configbuddy.v2/model"
 )
 
 type FileExecutor struct {
@@ -25,11 +24,7 @@ type FileExecutor struct {
 	finalDestination string
 }
 
-func NewFileExecutor(fileAction *model.FileAction,
-	fileName string,
-	args *model.Arguments,
-	parse parser.Parser,
-	backupService backup.BackupService) (*FileExecutor, error) {
+func newFileExecutor(fileAction *model.FileAction, fileName string, args *model.Arguments, parse parser.Parser, backupService backup.BackupService) (*FileExecutor, error) {
 	if len(fileAction.FileName) == 0 {
 		fileAction.FileName = fileName
 	}
@@ -60,7 +55,7 @@ func NewFileExecutor(fileAction *model.FileAction,
 	}, nil
 }
 
-func (f *FileExecutor) Execute() (err error) {
+func (f *FileExecutor) execute() (err error) {
 	err = f.createDirectoriesStructure()
 	if err != nil {
 		return err

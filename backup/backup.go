@@ -107,7 +107,7 @@ func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
 			}
 		}
 
-		err = utils.ExecuteCommand(fmt.Sprintf("cp -RL %s %s", sourceAbsPath, targetAbsPath))
+		err = utils.ExecuteCommand(fmt.Sprintf("cp -RL %s %s", sourceAbsPath, targetAbsPath)) // TODO - find another solution
 		if err != nil {
 			return BackupResult{
 				InitialPath: sourceAbsPath,
@@ -136,7 +136,7 @@ func checkDirectory(directory string) error {
 	case mode.IsDir():
 		return nil
 	default:
-		return fmt.Errorf("Given path (%s) is not a directory", directory)
+		return fmt.Errorf("Given path for backup (%s) is not a directory", directory)
 	}
 }
 

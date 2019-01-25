@@ -5,20 +5,18 @@ import (
 	"os"
 	"strings"
 
-	"github.com/andreic92/configbuddy.v2/backup"
+	cli "github.com/jawher/mow.cli"
+	log "github.com/sirupsen/logrus"
 
+	"github.com/andreic92/configbuddy.v2/backup"
+	"github.com/andreic92/configbuddy.v2/executor"
 	"github.com/andreic92/configbuddy.v2/model"
 	"github.com/andreic92/configbuddy.v2/parser"
-
-	"github.com/andreic92/configbuddy.v2/executor"
-
-	"github.com/jawher/mow.cli"
-	log "github.com/sirupsen/logrus"
 )
 
 const (
 	appSystemCode  = "configbuddy"
-	appDescription = "Lightweight configuration system made for simple tasks"
+	appDescription = "App done for installing my dotfiles"
 )
 
 func main() {
@@ -26,7 +24,7 @@ func main() {
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Errorf("App could not start, error=[%s]\n", err)
-		return
+		os.Exit(1)
 	}
 }
 
