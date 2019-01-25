@@ -94,6 +94,7 @@ func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.Co
 			return nil, err
 		}
 	}
+	res := appendToThis
 
 	for _, includeFile := range cfg.Config.Includes {
 		log.WithField("file", includeFile).Debug("include config")
@@ -103,7 +104,7 @@ func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.Co
 		}
 	}
 
-	return cfg, nil
+	return res, nil
 }
 
 func appendActionsToGlobalConfig(cfg *model.ConfigWrapper, appendToThis *model.ConfigWrapper) error {

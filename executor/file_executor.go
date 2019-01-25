@@ -66,6 +66,10 @@ func (f *FileExecutor) execute() (err error) {
 		return err
 	}
 
+	err = utils.RemoveResource(f.finalDestination)
+	if err != nil {
+		return err
+	}
 	return utils.ExecuteCommand(f.getCommand())
 }
 

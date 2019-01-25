@@ -25,5 +25,6 @@ func ExecuteCommand(command string) error {
 }
 
 func RemoveResource(resourcePath string) error {
+	log.WithField("resource path", resourcePath).Debug("remove resource")
 	return ExecuteCommand(fmt.Sprintf("rm -Rf %s", resourcePath))
 }

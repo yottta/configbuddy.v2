@@ -31,10 +31,27 @@ func main() {
 func initApp() *cli.Cli {
 	app := cli.App(appSystemCode, appDescription)
 
-	configs := app.StringsOpt("c", []string{}, "The path for config files")
-	backupActivated := app.BoolOpt("b", false, "Boolean saying if the backup should be performed or not. If you want backup to directory, specify -p too")
-	backupDirectory := app.StringOpt("p", "", "Path of the folder where the backup will be performed")
-	loggingLevel := app.StringOpt("l", "info", getLoggingFlagDescription())
+	configs := app.Strings(cli.StringsOpt{
+		Name:  "configs c",
+		Value: []string{},
+		Desc:  "The path for config files",
+	})
+
+	backupActivated := app.Bool(cli.BoolOpt{
+		Name:  "backup b",
+		Value: false,
+		Desc:  "Boolean saying if the backup should be performed or not. If you want backup to directory, specify -p too",
+	})
+	backupDirectory := app.String(cli.StringOpt{
+		Name:  "backup-path p",
+		Value: "",
+		Desc:  "Path of the folder where the backup will be performed",
+	})
+	loggingLevel := app.String(cli.StringOpt{
+		Name:  "log-level l",
+		Value: "info",
+		Desc:  getLoggingFlagDescription(),
+	})
 
 	app.Action = func() {
 		initLogging(*loggingLevel)

@@ -9,6 +9,7 @@ ENV dotfiles ${workdir}/dotfiles
 WORKDIR ${workdir}
 ADD ./dotfiles $workdir/dotfiles
 RUN echo "./configbuddy.v2 -c dotfiles/configs/work.yml -l debug" >> /root/.bash_history
+RUN echo "alias ll='ls -lah'" >> /root/.bashrc
 
 # setup
 ADD . $configbuddy_app

@@ -84,7 +84,7 @@ func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
 		}
 	}
 	// check if the file requested for backup exists
-	_, err = os.Stat(sourceAbsPath)
+	_, err = os.Lstat(sourceAbsPath)
 	if err != nil {
 		if strings.Contains(err.Error(), "no such file") {
 			return BackupResult{
@@ -96,6 +96,7 @@ func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
 			Error:     err,
 		}
 	}
+
 	targetAbsPath := ""
 	if d.backupActivated {
 		targetAbsPath, err = d.backupStrategy.extractTargetPath(sourceAbsPath)
@@ -107,7 +108,7 @@ func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
 			}
 		}
 
-		err = utils.ExecuteCommand(fmt.Sprintf("cp -RL %s %s", sourceAbsPath, targetAbsPath)) // TODO - find another solution
+		err = utils.ExecuteCommand(fmt.Sprintf("cp -R %s %s", sourceAbsPath, targetAbsPath))
 		if err != nil {
 			return BackupResult{
 				InitialPath: sourceAbsPath,
@@ -118,7 +119,6 @@ func (d *defaultBackupService) Backup(resourcePath string) BackupResult {
 		}
 	}
 
-	err = utils.RemoveResource(sourceAbsPath)
 	return BackupResult{
 		InitialPath: sourceAbsPath,
 		FinalPath:   targetAbsPath,
