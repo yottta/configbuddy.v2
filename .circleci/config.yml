@@ -31,7 +31,7 @@ jobs:
       - store_test_results:
           path: /tmp/test-results
       - run:
-          name: Cleanup the data for letting goreleaser to do its work
+          name: Cleanup
           command: rm configbuddy.v2
 
   release:
