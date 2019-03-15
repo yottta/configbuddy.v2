@@ -59,7 +59,19 @@ func (a *applicationExecutor) readConfigs() (err error) {
 }
 
 func (a *applicationExecutor) executePackages() (err error) {
-	return
+	return nil
+	// for name, act := range a.finalConf.Config.PackageActions {
+	// 	packageExecutor, err := newPackageExecutor(&act, name, a.configs, a.parser, a.backupService)
+	// 	if err != nil {
+	// 		log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+	// 		continue
+	// 	}
+	// 	err = packageExecutor.execute()
+	// 	if err != nil {
+	// 		log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+	// 	}
+	// }
+	// return
 }
 
 func (a *applicationExecutor) executeFiles() (err error) {

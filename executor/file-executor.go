@@ -13,7 +13,7 @@ import (
 	"github.com/andreic92/configbuddy.v2/utils"
 )
 
-type FileExecutor struct {
+type fileExecutor struct {
 	fileAction *model.FileAction
 	args       *model.Arguments
 
@@ -24,7 +24,7 @@ type FileExecutor struct {
 	finalDestination string
 }
 
-func newFileExecutor(fileAction *model.FileAction, fileName string, args *model.Arguments, parse parser.Parser, backupService backup.BackupService) (*FileExecutor, error) {
+func newFileExecutor(fileAction *model.FileAction, fileName string, args *model.Arguments, parse parser.Parser, backupService backup.BackupService) (*fileExecutor, error) {
 	if len(fileAction.FileName) == 0 {
 		fileAction.FileName = fileName
 	}
@@ -43,7 +43,7 @@ func newFileExecutor(fileAction *model.FileAction, fileName string, args *model.
 		return nil, err
 	}
 
-	return &FileExecutor{
+	return &fileExecutor{
 		fileAction: fileAction,
 		args:       args,
 
@@ -55,7 +55,7 @@ func newFileExecutor(fileAction *model.FileAction, fileName string, args *model.
 	}, nil
 }
 
-func (f *FileExecutor) execute() (err error) {
+func (f *fileExecutor) execute() (err error) {
 	err = f.createDirectoriesStructure()
 	if err != nil {
 		return err
@@ -73,15 +73,15 @@ func (f *FileExecutor) execute() (err error) {
 	return utils.ExecuteCommand(f.getCommand())
 }
 
-func (f *FileExecutor) getCommand() string {
+func (f *fileExecutor) getCommand() string {
 	return fmt.Sprintf("%s %s %s", f.fileAction.Command, f.fullPath, f.finalDestination)
 }
 
-func (f *FileExecutor) backup() error {
+func (f *fileExecutor) backup() error {
 	return f.backupService.Backup(f.finalDestination).Error
 }
 
-func (f *FileExecutor) createDirectoriesStructure() error {
+func (f *fileExecutor) createDirectoriesStructure() error {
 	return os.MkdirAll(path.Dir(f.finalDestination), os.ModePerm)
 }
 

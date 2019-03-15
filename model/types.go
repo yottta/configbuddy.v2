@@ -27,7 +27,8 @@ type FileAction struct {
 	Destination string `json:"destination"`
 }
 type PackageAction struct {
-	Alternatives string `json:"alternatives"`
+	PackageName  string              `json:"name"`         // if empty the map key will be used
+	Alternatives map[string][]string `json:"alternatives"` // map distro name with the the package alternative(s) for that specific distro
 }
 
 type Arguments struct {

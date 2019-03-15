@@ -68,13 +68,13 @@ func initApp() *cli.Cli {
 			log.WithError(err).Error("Could not create the backup instance")
 			return
 		}
-		parser, err := parser.NewParser()
+		parse, err := parser.NewParser()
 		if err != nil {
 			log.WithError(err).Error("Could not create the parser instance")
 			return
 		}
 
-		err = executor.StartConfiguring(args, parser, backupService)
+		err = executor.StartConfiguring(args, parse, backupService)
 		if err != nil {
 			log.WithError(err).Error("Error during configuration process")
 			return
