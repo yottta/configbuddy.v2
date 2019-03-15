@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -41,7 +42,7 @@ func StartConfiguring(config *model.Arguments, parse parser.Parser, backupServic
 
 func (a *applicationExecutor) readConfigs() (err error) {
 	if len(a.configs.Configs) == 0 {
-		log.Infof("No config files provided. Nothing to do here. Exit...")
+		err = fmt.Errorf("no config files provided. nothing to do here")
 		return
 	}
 
@@ -49,7 +50,7 @@ func (a *applicationExecutor) readConfigs() (err error) {
 	for _, filePath := range a.configs.Configs {
 		cfg, err = loadConfig(cfg, filePath)
 		if err != nil {
-			log.WithError(err).Errorf("Error during validate %s", filePath)
+			log.WithError(err).Errorf("error during validate %s", filePath)
 			return
 		}
 	}
@@ -78,12 +79,12 @@ func (a *applicationExecutor) executeFiles() (err error) {
 	for name, act := range a.finalConf.Config.FileActions {
 		fileExecutor, err := newFileExecutor(&act, name, a.configs, a.parser, a.backupService)
 		if err != nil {
-			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+			log.WithError(err).WithField("file action", act).Error("error during processing fileAction")
 			continue
 		}
 		err = fileExecutor.execute()
 		if err != nil {
-			log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+			log.WithError(err).WithField("file action", act).Error("error during processing fileAction")
 		}
 	}
 	return

@@ -87,7 +87,7 @@ func (f *fileExecutor) createDirectoriesStructure() error {
 
 func getFinalDestination(parse parser.Parser, fileAction *model.FileAction) (string, error) {
 	if len(fileAction.Destination) == 0 {
-		return "", fmt.Errorf("No destination defined for %s", fileAction.FileName)
+		return "", fmt.Errorf("no destination defined for %s", fileAction.FileName)
 	}
 	destination, err := parse.Parse(fileAction.Destination)
 	if err != nil {

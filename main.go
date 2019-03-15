@@ -55,7 +55,7 @@ func initApp() *cli.Cli {
 
 	app.Action = func() {
 		initLogging(*loggingLevel)
-		log.Infof("Configbuddy started")
+		log.Infof("configbuddy started")
 
 		args := &model.Arguments{
 			Configs:         *configs,
@@ -65,18 +65,18 @@ func initApp() *cli.Cli {
 
 		backupService, err := backup.NewBackupService(args)
 		if err != nil {
-			log.WithError(err).Error("Could not create the backup instance")
+			log.WithError(err).Error("could not create the backup instance")
 			return
 		}
 		parse, err := parser.NewParser()
 		if err != nil {
-			log.WithError(err).Error("Could not create the parser instance")
+			log.WithError(err).Error("could not create the parser instance")
 			return
 		}
 
 		err = executor.StartConfiguring(args, parse, backupService)
 		if err != nil {
-			log.WithError(err).Error("Error during configuration process")
+			log.WithError(err).Error("error during configuration process")
 			return
 		}
 	}
@@ -98,7 +98,7 @@ func initLogging(loggingLevel string) {
 		panic(err)
 	}
 	log.SetLevel(logLevel)
-	log.Infof("Logging level set to %s", strings.ToLower(loggingLevel))
+	log.Infof("logging level set to %s", strings.ToLower(loggingLevel))
 }
 
 func getLoggingFlagDescription() string {
@@ -106,5 +106,5 @@ func getLoggingFlagDescription() string {
 	for _, lvl := range log.AllLevels {
 		levelsAsString = append(levelsAsString, lvl.String())
 	}
-	return fmt.Sprintf("The logging level. Valid values: %s", strings.Join(levelsAsString, ","))
+	return fmt.Sprintf("the logging level. valid values: %s", strings.Join(levelsAsString, ","))
 }

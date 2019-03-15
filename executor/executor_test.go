@@ -19,7 +19,7 @@ const (
 	directoryWithTestingFiles = "../testing"
 )
 
-func Test01TestReadFile(t *testing.T) {
+func TestTestReadFile(t *testing.T) {
 	assert := ast.New(t)
 	// this should be an error
 	res, err := readFile("test.yml")
@@ -157,6 +157,14 @@ func TestStartConfiguring(t *testing.T) {
 
 	deleteResource(assert, directoryWithTestingFiles+"/.test_1_conf_file")
 	deleteResource(assert, directoryWithTestingFiles+"/.test_1_included_conf_file")
+}
+
+func TestStartConfiguringNoConfigsProvided(t *testing.T) {
+	assert := ast.New(t)
+
+	err := StartConfiguring(mockApplicationParameters([]string{}), doMockParser(), &mockBackupService{})
+	assert.Error(err)
+	assert.Contains(err.Error(), "no config files provided")
 }
 
 func deleteResource(assert *ast.Assertions, path string) {

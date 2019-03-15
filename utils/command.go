@@ -11,7 +11,7 @@ import (
 func ExecuteCommand(command string) error {
 	cmdArr := strings.Fields(command)
 	if len(cmdArr) < 2 {
-		return fmt.Errorf("Invalid command. You should pass the arguments too! Command: '%s'", command)
+		return fmt.Errorf("invalid command, arguments missing. command: '%s'", command)
 	}
 
 	cmd := exec.Command(cmdArr[0], cmdArr[1:]...)
