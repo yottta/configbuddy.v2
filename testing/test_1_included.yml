@@ -6,4 +6,6 @@ FileAction:
 
 PackageAction:
   i3:
-    alternatives: i3-wm
+    alternatives: 
+      ubuntu:
+        - i3-wm
