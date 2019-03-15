@@ -26,6 +26,8 @@ jobs:
       - run:
           name: Run Tests
           command: |
+            mkdir -p ${CIRCLE_COVERAGE_REPORT}
+            mkdir -p ${CIRCLE_TEST_REPORTS}
             go test -race -cover -coverprofile=${CIRCLE_COVERAGE_REPORT}/coverage.out ./... | go-junit-report > ${CIRCLE_TEST_REPORTS}/junit.xml
       - run:
           name: Upload Coverage
@@ -33,7 +35,7 @@ jobs:
       - store_test_results:
           path: /tmp/test-results
       - run:
-          name: Cleanup the data for letting goreleaser to do it's work
+          name: Cleanup the data for letting goreleaser to do its work
           command: rm configbuddy.v2
 
   release:
