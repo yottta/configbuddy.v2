@@ -117,7 +117,8 @@ func TestReadConfigs(t *testing.T) {
 	}
 	executor = &applicationExecutor{configs: config}
 	err = executor.readConfigs()
-	assert.NoError(err)
+	assert.Error(err)
+	assert.Contains(err.Error(), "no config files provided")
 	assert.Nil(executor.finalConf)
 
 	// invalid content

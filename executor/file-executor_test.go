@@ -61,7 +61,7 @@ func TestNewFileExecutor(t *testing.T) {
 				Command:  "ln -s",
 				FileName: "test_file",
 			},
-			expectedErrorMsgSnapshot: "No destination defined for test_file",
+			expectedErrorMsgSnapshot: "no destination defined for test_file",
 		},
 		{
 			testName: "wrong destination placeholder",

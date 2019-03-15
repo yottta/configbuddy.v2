@@ -22,5 +22,5 @@ func TestCommand(t *testing.T) {
 
 	err = ExecuteCommand("touch")
 	assert.Error(err)
-	assert.Equal("Invalid command. You should pass the arguments too! Command: 'touch'", err.Error())
+	assert.Equal("invalid command, arguments missing. command: 'touch'", err.Error())
 }
