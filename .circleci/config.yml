@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /configbuddy.v2
     docker:
-      - image: golang:1.12.0
+      - image: golang:1.12.1
         environment:
           CIRCLE_TEST_REPORTS: /tmp/test-results
           CIRCLE_COVERAGE_REPORT: /tmp/coverage-results
@@ -37,7 +37,7 @@ jobs:
   release:
     working_directory: /go/src/github.com/andreic92/configbuddy.v2
     docker:
-      - image: golang:1.12.0
+      - image: golang:1.12.1
     steps:
       - checkout
       - deploy:

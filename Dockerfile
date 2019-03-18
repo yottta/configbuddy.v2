@@ -1,5 +1,5 @@
-FROM golang:1.11.5
-#FROM yottta/arch-go:go1.11.5
+FROM golang:1.12.1
+#FROM yottta/arch-go:go1.12.1
 
 # env
 ENV workdir /configbuddy_ws
