@@ -12,13 +12,14 @@ func Test01TestStringFunc(t *testing.T) {
 	assert := ast.New(t)
 
 	pkgAct := &PackageAction{
+		PackageName: "test_pkg_act",
 		Alternatives: map[string][]string{
 			"ubuntu": []string{
 				"test_alternative",
 			},
 		},
 	}
-	assert.Equal("{ (model.PackageAction) Alternatives: map[ubuntu:[test_alternative]]; }", fmt.Sprintf("%s", pkgAct))
+	assert.Equal("{ (model.PackageAction) Name: test_pkg_act; Alternatives: map[ubuntu:[test_alternative]]; }", fmt.Sprintf("%s", pkgAct))
 
 	fileAct := &FileAction{
 		Command:     "test_command",
@@ -39,18 +40,18 @@ func Test01TestStringFunc(t *testing.T) {
 		FileActions: map[string]FileAction{
 			"test_file_act": *fileAct,
 		},
-		PackageActions: map[string]PackageAction{
-			"test_pkg_act": *pkgAct,
+		PackageActions: []PackageAction{
+			*pkgAct,
 		},
 		Includes: []string{"first_import", "second_import"},
 		Globals:  globals,
 	}
-	assert.Equal("{ (model.Config) Globals: { (model.Globals) ExitOnError: true; ConfirmEveryPackage: true }; Includes: [first_import second_import]; FileActions: map[test_file_act:{ (model.FileAction) FileName: test_filename; Hidden: true; Source: test_source; Command: test_command; Destination: test_destination }]; PackageActions: map[test_pkg_act:{ (model.PackageAction) Alternatives: map[ubuntu:[test_alternative]]; }] }", fmt.Sprintf("%s", config))
+	assert.Equal("{ (model.Config) Globals: { (model.Globals) ExitOnError: true; ConfirmEveryPackage: true }; Includes: [first_import second_import]; FileActions: map[test_file_act:{ (model.FileAction) FileName: test_filename; Hidden: true; Source: test_source; Command: test_command; Destination: test_destination }]; PackageActions: [{ (model.PackageAction) Name: test_pkg_act; Alternatives: map[ubuntu:[test_alternative]]; }] }", fmt.Sprintf("%s", config))
 
 	wrap := ConfigWrapper{
 		Config:              config,
 		ConfigFileDirectory: "config_dir",
 		ConfigFilePath:      "config_file_path",
 	}
-	assert.Equal("{ (model.ConfigWrapper) ConfigFileDirectory: config_dir; ConfigFilePath: config_file_path; Config: { (model.Config) Globals: { (model.Globals) ExitOnError: true; ConfirmEveryPackage: true }; Includes: [first_import second_import]; FileActions: map[test_file_act:{ (model.FileAction) FileName: test_filename; Hidden: true; Source: test_source; Command: test_command; Destination: test_destination }]; PackageActions: map[test_pkg_act:{ (model.PackageAction) Alternatives: map[ubuntu:[test_alternative]]; }] } }", fmt.Sprintf("%s", wrap))
+	assert.Equal("{ (model.ConfigWrapper) ConfigFileDirectory: config_dir; ConfigFilePath: config_file_path; Config: { (model.Config) Globals: { (model.Globals) ExitOnError: true; ConfirmEveryPackage: true }; Includes: [first_import second_import]; FileActions: map[test_file_act:{ (model.FileAction) FileName: test_filename; Hidden: true; Source: test_source; Command: test_command; Destination: test_destination }]; PackageActions: [{ (model.PackageAction) Name: test_pkg_act; Alternatives: map[ubuntu:[test_alternative]]; }] } }", fmt.Sprintf("%s", wrap))
 }

@@ -221,3 +221,7 @@ func (d *mockParser) Parse(val string) (string, error) {
 	}
 	return bytes.String(), nil
 }
+
+func (d *mockParser) EvaluateCondition(condition string) (bool, error) {
+	return true, nil
+}

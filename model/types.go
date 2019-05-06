@@ -81,6 +81,6 @@ func (f FileAction) String() string {
 }
 
 func (p PackageAction) String() string {
-	return fmt.Sprintf("{ (model.PackageAction) Alternatives: %s; }",
-		p.Alternatives)
+	return fmt.Sprintf("{ (model.PackageAction) Name: %s; Alternatives: %s; }",
+		p.PackageName, p.Alternatives)
 }

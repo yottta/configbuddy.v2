@@ -5,7 +5,7 @@ FileAction:
     destination: ./
 
 PackageAction:
-  i3:
+  - name: i3
     alternatives: 
       ubuntu:
         - i3-wm
