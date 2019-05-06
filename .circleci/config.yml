@@ -35,7 +35,7 @@ jobs:
           command: rm configbuddy.v2
 
   release:
-    working_directory: /go/src/github.com/andreic92/configbuddy.v2
+    working_directory: /go/src/github.com/yottta/configbuddy.v2
     docker:
       - image: golang:1.12.1
     steps:

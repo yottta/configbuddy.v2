@@ -26,19 +26,19 @@ var (
 	ErrorNotSupportedDistro = fmt.Errorf("Unsupported distro")
 )
 
-func GetPckManager() (string, error) {
+func PckManager() (string, error) {
 	if runtime.GOOS == DarwinSystem {
 		return BrewPackageManager, nil
 	}
 
 	if runtime.GOOS == LinuxSystem {
-		return getLinuxPckManager()
+		return linuxPckManager()
 	}
 
 	return "", fmt.Errorf("The current OS (%s) is not supported", runtime.GOOS)
 }
 
-func getLinuxPckManager() (string, error) {
+func linuxPckManager() (string, error) {
 	for fileToCheck, packageManager := range linuxSupportedSystems {
 		stat, err := os.Stat(fileToCheck)
 		if err != nil {

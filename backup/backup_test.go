@@ -7,7 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/andreic92/configbuddy.v2/model"
+	"github.com/yottta/configbuddy.v2/model"
 
 	ast "github.com/stretchr/testify/assert"
 )

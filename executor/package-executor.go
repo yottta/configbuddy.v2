@@ -1,12 +1,24 @@
 package executor
 
 import (
-	"github.com/andreic92/configbuddy.v2/backup"
-	"github.com/andreic92/configbuddy.v2/model"
-	"github.com/andreic92/configbuddy.v2/parser"
+	"fmt"
+	"strings"
+
+	log "github.com/sirupsen/logrus"
+
+	"github.com/yottta/configbuddy.v2/backup"
+	"github.com/yottta/configbuddy.v2/model"
+	"github.com/yottta/configbuddy.v2/parser"
 )
 
-type packageExecutor struct {
+const (
+	gitPackageSource = "git"
+)
+
+type packageExecutor interface {
+	execute() (err error)
+}
+type sysPackageExecutor struct {
 	packageAction *model.PackageAction
 	args          *model.Arguments
 
@@ -14,26 +26,33 @@ type packageExecutor struct {
 	parser        parser.Parser
 }
 
-func newPackageExecutor(packageAction *model.PackageAction, packageName string, args *model.Arguments, parse parser.Parser, backupService backup.BackupService) (*packageExecutor, error) {
+func newPackageExecutor(packageAction *model.PackageAction, args *model.Arguments, parse parser.Parser, backupService backup.BackupService) (packageExecutor, error) {
 	if len(packageAction.PackageName) == 0 {
-		packageAction.PackageName = packageName
+		return nil, fmt.Errorf("empty package action name")
 	}
+	if packageAction.Source == gitPackageSource {
+		gitPackageDestination, err := getPackageDestination(parse, packageAction)
+		if err != nil {
+			return nil, err
+		}
 
-	// // source path
-	// var fullPath string
-	// if len(fileAction.Source) > 0 {
-	// 	fullPath = fmt.Sprintf("%s/%s", strings.TrimRight(fileAction.Source, "/"), fileAction.FileName)
-	// } else {
-	// 	fullPath = fmt.Sprintf("./%s", fileAction.FileName)
-	// }
+		if len(packageAction.URL) == 0 {
+			return nil, fmt.Errorf("url empty for %s package action", packageAction.PackageName)
+		}
 
-	// // target path
-	// finalDestination, err := getFinalDestination(parse, fileAction)
-	// if err != nil {
-	// 	return nil, err
-	// }
+		return &gitPackageExecutor{
+			sysPackageExecutor: sysPackageExecutor{
+				packageAction: packageAction,
+				args:          args,
 
-	return &packageExecutor{
+				backupService: backupService,
+				parser:        parse,
+			},
+
+			packageDestination: gitPackageDestination,
+		}, nil
+	}
+	return &sysPackageExecutor{
 		packageAction: packageAction,
 		args:          args,
 
@@ -42,6 +61,17 @@ func newPackageExecutor(packageAction *model.PackageAction, packageName string, 
 	}, nil
 }
 
-func (p *packageExecutor) execute() (err error) {
+func (p *sysPackageExecutor) execute() (err error) {
+	log.WithField("PackageName", p.packageAction.PackageName).Info("package action executed (unimplemented)")
 	return nil
+}
+
+func (p *sysPackageExecutor) command() string {
+	var buff strings.Builder
+	if p.packageAction.Sudo {
+		buff.WriteString("sudo ")
+	}
+	buff.WriteString(parser.PackageManagerPlaceholder)
+
+	return "" //fmt.Sprintf("%s %s %s", f.fileAction.Command, f.fullPath, f.finalDestination)
 }

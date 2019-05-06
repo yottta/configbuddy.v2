@@ -40,3 +40,33 @@ func TestParser(t *testing.T) {
 	assert.NotContains(res, defaultParserPrefix)
 	assert.Contains(res, usr.HomeDir)
 }
+
+func TestConditionEvaluation(t *testing.T) {
+	assert := ast.New(t)
+	d := defaultParser{
+		conditionsData: map[string]interface{}{
+			"a": 1,
+		},
+	}
+	cond := "a == 1"
+
+	evalRes, err := d.EvaluateCondition(cond)
+	assert.True(evalRes)
+	assert.NoError(err)
+
+	d.conditionsData["a"] = 2
+	evalRes, err = d.EvaluateCondition(cond)
+	assert.False(evalRes)
+	assert.NoError(err)
+
+	cond = "d == 1"
+	evalRes, err = d.EvaluateCondition(cond)
+	assert.False(evalRes)
+	assert.Error(err)
+
+	cond = "d = 1"
+	evalRes, err = d.EvaluateCondition(cond)
+	assert.False(evalRes)
+	assert.Error(err)
+
+}

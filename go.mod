@@ -1,8 +1,9 @@
-module github.com/andreic92/configbuddy.v2
+module github.com/yottta/configbuddy.v2
 
 go 1.12
 
 require (
+	github.com/Knetic/govaluate v3.0.0+incompatible
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/jawher/mow.cli v1.0.3

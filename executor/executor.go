@@ -9,9 +9,9 @@ import (
 	"github.com/ghodss/yaml"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/andreic92/configbuddy.v2/backup"
-	"github.com/andreic92/configbuddy.v2/model"
-	"github.com/andreic92/configbuddy.v2/parser"
+	"github.com/yottta/configbuddy.v2/backup"
+	"github.com/yottta/configbuddy.v2/model"
+	"github.com/yottta/configbuddy.v2/parser"
 )
 
 type applicationExecutor struct {
@@ -77,6 +77,15 @@ func (a *applicationExecutor) executePackages() (err error) {
 
 func (a *applicationExecutor) executeFiles() (err error) {
 	for name, act := range a.finalConf.Config.FileActions {
+		skipAct, err := checkExecutable(a.parser, act.ConditionalAction)
+		if err != nil {
+			return err
+		}
+		if skipAct {
+			log.WithField("Action", name).Info("File action skipped")
+			continue
+		}
+
 		fileExecutor, err := newFileExecutor(&act, name, a.configs, a.parser, a.backupService)
 		if err != nil {
 			log.WithError(err).WithField("file action", act).Error("error during processing fileAction")
@@ -139,10 +148,10 @@ func appendActionsToGlobalConfig(cfg *model.ConfigWrapper, appendToThis *model.C
 
 	// package actions
 	if appendToThis.Config.PackageActions == nil {
-		appendToThis.Config.PackageActions = make(map[string]model.PackageAction)
+		appendToThis.Config.PackageActions = []model.PackageAction{}
 	}
-	for key, val := range cfg.Config.PackageActions {
-		appendToThis.Config.PackageActions[key] = val
+	for _, val := range cfg.Config.PackageActions {
+		appendToThis.Config.PackageActions = append(appendToThis.Config.PackageActions, val)
 	}
 	return nil
 }
@@ -169,4 +178,13 @@ func readFile(filePath string) (*model.ConfigWrapper, error) {
 		ConfigFilePath:      abs,
 		ConfigFileDirectory: filepath.Dir(abs),
 	}, nil
+}
+
+func checkExecutable(parse parser.Parser, conditionalAction model.ConditionalAction) (bool, error) {
+	if len(conditionalAction.Condition()) == 0 {
+		return false, nil
+	}
+
+	val, err := parse.EvaluateCondition(conditionalAction.Condition())
+	return !val, err
 }

@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andreic92/configbuddy.v2/backup"
-	"github.com/andreic92/configbuddy.v2/model"
-	"github.com/andreic92/configbuddy.v2/parser"
-	"github.com/andreic92/configbuddy.v2/utils"
+	"github.com/yottta/configbuddy.v2/backup"
+	"github.com/yottta/configbuddy.v2/model"
+	"github.com/yottta/configbuddy.v2/parser"
+	"github.com/yottta/configbuddy.v2/utils"
 )
 
 type fileExecutor struct {
@@ -70,10 +70,10 @@ func (f *fileExecutor) execute() (err error) {
 	if err != nil {
 		return err
 	}
-	return utils.ExecuteCommand(f.getCommand())
+	return utils.ExecuteCommand(f.command())
 }
 
-func (f *fileExecutor) getCommand() string {
+func (f *fileExecutor) command() string {
 	return fmt.Sprintf("%s %s %s", f.fileAction.Command, f.fullPath, f.finalDestination)
 }
 

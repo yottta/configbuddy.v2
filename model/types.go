@@ -8,10 +8,10 @@ type ConfigWrapper struct {
 	ConfigFileDirectory string
 }
 type Config struct {
-	Globals        *Globals                 `json:"Globals"`
-	Includes       []string                 `json:"includes"`
-	FileActions    map[string]FileAction    `json:"FileAction"`
-	PackageActions map[string]PackageAction `json:"PackageAction"`
+	Globals        *Globals              `json:"Globals"`
+	Includes       []string              `json:"includes"`
+	FileActions    map[string]FileAction `json:"FileAction"`
+	PackageActions []PackageAction       `json:"PackageAction"`
 }
 
 type Globals struct {
@@ -19,7 +19,12 @@ type Globals struct {
 	ConfirmEveryPackage bool `json:"confirmEveryPackage"`
 }
 
+type ConditionalAction struct {
+	When string `json:"when"`
+}
+
 type FileAction struct {
+	ConditionalAction
 	FileName    string `json:"name"` // if empty the map key will be used
 	Hidden      bool   `json:"hidden"`
 	Source      string `json:"source"`
@@ -27,8 +32,13 @@ type FileAction struct {
 	Destination string `json:"destination"`
 }
 type PackageAction struct {
+	ConditionalAction
 	PackageName  string              `json:"name"`         // if empty the map key will be used
 	Alternatives map[string][]string `json:"alternatives"` // map distro name with the the package alternative(s) for that specific distro
+	Source       string              `json:"source"`
+	URL          string              `json:"url"`
+	Destination  string              `json:"destination"`
+	Sudo         bool                `json:"sudo"`
 }
 
 type Arguments struct {
@@ -37,6 +47,9 @@ type Arguments struct {
 	BackupActivated bool
 }
 
+func (c *ConditionalAction) Condition() string {
+	return c.When
+}
 func (w ConfigWrapper) String() string {
 	return fmt.Sprintf("{ (model.ConfigWrapper) ConfigFileDirectory: %s; ConfigFilePath: %s; Config: %s }",
 		w.ConfigFileDirectory,

@@ -3,7 +3,7 @@ FROM golang:1.12.1
 
 # env
 ENV workdir /configbuddy_ws
-ENV configbuddy_app /go/src/github.com/andreic92/configbuddy.v2
+ENV configbuddy_app /go/src/github.com/yottta/configbuddy.v2
 ENV dotfiles ${workdir}/dotfiles
 
 # workdir

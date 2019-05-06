@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/andreic92/configbuddy.v2/model"
-	"github.com/andreic92/configbuddy.v2/utils"
+	"github.com/yottta/configbuddy.v2/model"
+	"github.com/yottta/configbuddy.v2/utils"
 )
 
 type BackupService interface {

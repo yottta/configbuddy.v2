@@ -6,11 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/andreic92/configbuddy.v2/parser"
+	"github.com/yottta/configbuddy.v2/parser"
 
-	"github.com/andreic92/configbuddy.v2/backup"
+	"github.com/yottta/configbuddy.v2/backup"
 
-	"github.com/andreic92/configbuddy.v2/model"
+	"github.com/yottta/configbuddy.v2/model"
 
 	ast "github.com/stretchr/testify/assert"
 )
