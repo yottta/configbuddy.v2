@@ -1,4 +1,4 @@
-FROM golang:1.12.1
+FROM golang:1.19.1
 #FROM yottta/arch-go:go1.12.1
 
 # env
