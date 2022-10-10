@@ -2,11 +2,11 @@ package executor
 
 import (
 	"fmt"
-	"io/ioutil"
+	"gopkg.in/yaml.v2"
+	"os"
 	"path/filepath"
 	"strings"
 
-	"github.com/ghodss/yaml"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/yottta/configbuddy.v2/backup"
@@ -163,7 +163,7 @@ func readFile(filePath string) (*model.ConfigWrapper, error) {
 	}
 
 	log.WithField("file", abs).Debug("reading file")
-	bytes, err := ioutil.ReadFile(abs)
+	bytes, err := os.ReadFile(abs)
 	if err != nil {
 		return nil, err
 	}

@@ -8,37 +8,37 @@ type ConfigWrapper struct {
 	ConfigFileDirectory string
 }
 type Config struct {
-	Globals        *Globals              `json:"Globals"`
-	Includes       []string              `json:"includes"`
-	FileActions    map[string]FileAction `json:"FileAction"`
-	PackageActions []PackageAction       `json:"PackageAction"`
+	Globals        *Globals              `yaml:"Globals"`
+	Includes       []string              `yaml:"includes"`
+	FileActions    map[string]FileAction `yaml:"FileAction"`
+	PackageActions []PackageAction       `yaml:"PackageAction"`
 }
 
 type Globals struct {
-	ExitOnError         bool `json:"exitOnError"`
-	ConfirmEveryPackage bool `json:"confirmEveryPackage"`
+	ExitOnError         bool `yaml:"exitOnError"`
+	ConfirmEveryPackage bool `yaml:"confirmEveryPackage"`
 }
 
 type ConditionalAction struct {
-	When string `json:"when"`
+	When string `yaml:"when"`
 }
 
 type FileAction struct {
 	ConditionalAction
-	FileName    string `json:"name"` // if empty the map key will be used
-	Hidden      bool   `json:"hidden"`
-	Source      string `json:"source"`
-	Command     string `json:"command"`
-	Destination string `json:"destination"`
+	FileName    string `yaml:"name"` // if empty the map key will be used
+	Hidden      bool   `yaml:"hidden"`
+	Source      string `yaml:"source"`
+	Command     string `yaml:"command"`
+	Destination string `yaml:"destination"`
 }
 type PackageAction struct {
 	ConditionalAction
-	PackageName  string              `json:"name"`         // if empty the map key will be used
-	Alternatives map[string][]string `json:"alternatives"` // map distro name with the the package alternative(s) for that specific distro
-	Source       string              `json:"source"`
-	URL          string              `json:"url"`
-	Destination  string              `json:"destination"`
-	Sudo         bool                `json:"sudo"`
+	PackageName  string              `yaml:"name"`         // if empty the map key will be used
+	Alternatives map[string][]string `yaml:"alternatives"` // map distro name with the the package alternative(s) for that specific distro
+	Source       string              `yaml:"source"`
+	URL          string              `yaml:"url"`
+	Destination  string              `yaml:"destination"`
+	Sudo         bool                `yaml:"sudo"`
 }
 
 type Arguments struct {

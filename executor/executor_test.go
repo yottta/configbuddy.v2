@@ -38,7 +38,7 @@ func TestTestReadFile(t *testing.T) {
 	invalidFileContent := directoryWithTestingFiles + "/test_invalid_file.yml"
 	res, err = readFile(invalidFileContent)
 	assert.Error(err)
-	assert.Contains(err.Error(), "error unmarshaling JSON")
+	assert.Contains(err.Error(), "cannot unmarshal !!str `dsadasd...`")
 	assert.Nil(res)
 }
 
@@ -86,7 +86,7 @@ func TestLoadConfig(t *testing.T) {
 	invalidFile := directoryWithTestingFiles + "/test_invalid_file.yml"
 	conf, err = loadConfig(conf, invalidFile)
 	assert.Error(err)
-	assert.Contains(err.Error(), "error unmarshaling JSON")
+	assert.Contains(err.Error(), "cannot unmarshal !!str `dsadasd...`")
 	assert.Nil(conf)
 
 	conf = nil
@@ -129,7 +129,7 @@ func TestReadConfigs(t *testing.T) {
 	executor = &applicationExecutor{configs: config}
 	err = executor.readConfigs()
 	assert.Error(err)
-	assert.Contains(err.Error(), "error unmarshaling JSON")
+	assert.Contains(err.Error(), "cannot unmarshal !!str `dsadasd...`")
 	assert.Nil(executor.finalConf)
 
 	// import valid file with a non existent imported file
@@ -149,7 +149,7 @@ func TestStartConfiguring(t *testing.T) {
 
 	err := StartConfiguring(mockApplicationParameters([]string{directoryWithTestingFiles + "/test_invalid_file.yml"}), doMockParser(), &mockBackupService{})
 	assert.Error(err)
-	assert.Contains(err.Error(), "error unmarshaling JSON")
+	assert.Contains(err.Error(), "cannot unmarshal !!str `dsadasd...`")
 
 	err = StartConfiguring(mockApplicationParameters([]string{directoryWithTestingFiles + "/test1.yml"}), doMockParser(), &mockBackupService{})
 	assert.NoError(err)

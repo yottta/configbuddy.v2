@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"path/filepath"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/yottta/configbuddy.v2/model"
 	"github.com/yottta/configbuddy.v2/parser"
-	log "github.com/sirupsen/logrus"
 )
 
 type gitPackageExecutor struct {
