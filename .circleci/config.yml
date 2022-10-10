@@ -56,9 +56,13 @@ workflows:
               ignore: /^v.*/
   tagged-build:
     jobs:
+      - build:
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
       - release:
-          requires:
-            - build
           filters:
             branches:
               ignore: /.*/
