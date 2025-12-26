@@ -2,12 +2,12 @@ package parser
 
 import (
 	"bytes"
+	log "log/slog"
 	"os/user"
 	"strings"
 	"text/template"
 
 	"github.com/Knetic/govaluate"
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -58,7 +58,7 @@ func NewParser() (Parser, error) {
 		newKey := strings.TrimRight(strings.TrimLeft(k, defaultParserPrefix), defaultParserSuffix)
 		parser.conditionsData[newKey] = v
 	}
-	log.WithField("parsing data", parser.parsingData).
+	log.With("parsing data", parser.parsingData).
 		Debug("parsing data processed")
 
 	return parser, nil
@@ -92,7 +92,7 @@ func (d *defaultParser) EvaluateCondition(condition string) (bool, error) {
 
 	res, ok := result.(bool)
 	if !ok {
-		log.WithField("condition", condition).Warn("failed to evaluate the condition")
+		log.With("condition", condition).Warn("failed to evaluate the condition")
 		return false, nil
 	}
 	return res, nil

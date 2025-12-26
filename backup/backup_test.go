@@ -2,10 +2,9 @@ package backup
 
 import (
 	"fmt"
+	log "log/slog"
 	"os"
 	"testing"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/yottta/configbuddy.v2/model"
 
@@ -20,13 +19,13 @@ func TestMain(m *testing.M) {
 	os.RemoveAll(testingDirectory)
 	err := os.Mkdir(testingDirectory, os.ModePerm)
 	if err != nil {
-		log.WithError(err).Error("Couldn't create testing directory")
+		log.With("error", err).Error("couldn't create testing directory")
 		os.Exit(1)
 	}
 	code := m.Run()
 	err = os.RemoveAll(testingDirectory)
 	if err != nil {
-		log.WithError(err).Error("Couldn't clean up the testing directory")
+		log.With("error", err).Error("couldn't clean up the testing directory")
 		os.Exit(2)
 	}
 	os.Exit(code)

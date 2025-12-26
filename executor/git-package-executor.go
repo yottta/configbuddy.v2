@@ -2,9 +2,9 @@ package executor
 
 import (
 	"fmt"
+	log "log/slog"
 	"path/filepath"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/yottta/configbuddy.v2/model"
 	"github.com/yottta/configbuddy.v2/parser"
 )
@@ -16,7 +16,7 @@ type gitPackageExecutor struct {
 }
 
 func (p *gitPackageExecutor) execute() (err error) {
-	log.WithField("PackageName", p.packageAction.PackageName).Info("package action executed (unimplemented)")
+	log.With("package name", p.packageAction.PackageName).Info("package action executed (unimplemented)")
 	return nil
 }
 

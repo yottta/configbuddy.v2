@@ -2,10 +2,9 @@ package parser
 
 import (
 	"fmt"
+	log "log/slog"
 	"os"
 	"runtime"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -42,10 +41,10 @@ func linuxPckManager() (string, error) {
 	for fileToCheck, packageManager := range linuxSupportedSystems {
 		stat, err := os.Stat(fileToCheck)
 		if err != nil {
-			log.WithError(err).
-				WithField("FileToCheck", fileToCheck).
-				WithField("PackageManager", packageManager).
-				Debug("Skipped package manager check")
+			log.With("error", err).
+				With("file to check", fileToCheck).
+				With("package manager", packageManager).
+				Debug("skipped package manager check")
 			continue
 		}
 		if !stat.IsDir() {

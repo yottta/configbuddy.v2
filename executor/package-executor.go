@@ -2,9 +2,8 @@ package executor
 
 import (
 	"fmt"
+	log "log/slog"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/yottta/configbuddy.v2/backup"
 	"github.com/yottta/configbuddy.v2/model"
@@ -62,7 +61,7 @@ func newPackageExecutor(packageAction *model.PackageAction, args *model.Argument
 }
 
 func (p *sysPackageExecutor) execute() (err error) {
-	log.WithField("PackageName", p.packageAction.PackageName).Info("package action executed (unimplemented)")
+	log.With("package name", p.packageAction.PackageName).Info("package action executed (unimplemented)")
 	return nil
 }
 
@@ -73,5 +72,5 @@ func (p *sysPackageExecutor) command() string {
 	}
 	buff.WriteString(parser.PackageManagerPlaceholder)
 
-	return "" //fmt.Sprintf("%s %s %s", f.fileAction.Command, f.fullPath, f.finalDestination)
+	return "" // fmt.Sprintf("%s %s %s", f.fileAction.Command, f.fullPath, f.finalDestination)
 }

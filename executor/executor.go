@@ -2,12 +2,11 @@ package executor
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
+	log "log/slog"
 	"os"
 	"path/filepath"
 	"strings"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/yottta/configbuddy.v2/backup"
 	"github.com/yottta/configbuddy.v2/model"
@@ -50,7 +49,7 @@ func (a *applicationExecutor) readConfigs() (err error) {
 	for _, filePath := range a.configs.Configs {
 		cfg, err = loadConfig(cfg, filePath)
 		if err != nil {
-			log.WithError(err).Errorf("error during validate %s", filePath)
+			log.With("error", err).Error(fmt.Sprintf("error during validate %s", filePath))
 			return
 		}
 	}
@@ -64,12 +63,12 @@ func (a *applicationExecutor) executePackages() (err error) {
 	// for name, act := range a.finalConf.Config.PackageActions {
 	// 	packageExecutor, err := newPackageExecutor(&act, name, a.configs, a.parser, a.backupService)
 	// 	if err != nil {
-	// 		log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+	// 		log.With("error", err).With("file action", act).Error("Error during processing fileAction")
 	// 		continue
 	// 	}
 	// 	err = packageExecutor.execute()
 	// 	if err != nil {
-	// 		log.WithError(err).WithField("file action", act).Error("Error during processing fileAction")
+	// 		log.With("error", err).With("file action", act).Error("Error during processing fileAction")
 	// 	}
 	// }
 	// return
@@ -82,18 +81,18 @@ func (a *applicationExecutor) executeFiles() (err error) {
 			return err
 		}
 		if skipAct {
-			log.WithField("Action", name).Info("File action skipped")
+			log.With("action", name).Info("File action skipped")
 			continue
 		}
 
 		fileExecutor, err := newFileExecutor(&act, name, a.configs, a.parser, a.backupService)
 		if err != nil {
-			log.WithError(err).WithField("file action", act).Error("error during processing fileAction")
+			log.With("error", err).With("file action", act).Error("error during processing fileAction")
 			continue
 		}
 		err = fileExecutor.execute()
 		if err != nil {
-			log.WithError(err).WithField("file action", act).Error("error during processing fileAction")
+			log.With("error", err).With("file action", act).Error("error during processing fileAction")
 		}
 	}
 	return
@@ -119,7 +118,7 @@ func loadConfig(appendToThis *model.ConfigWrapper, fileToLoad string) (*model.Co
 	res := appendToThis
 
 	for _, includeFile := range cfg.Config.Includes {
-		log.WithField("file", includeFile).Debug("include config")
+		log.With("file", includeFile).Debug("include config")
 		_, err := loadConfig(appendToThis, cfg.ConfigFileDirectory+"/"+includeFile)
 		if err != nil {
 			return nil, err
@@ -162,7 +161,7 @@ func readFile(filePath string) (*model.ConfigWrapper, error) {
 		return nil, err
 	}
 
-	log.WithField("file", abs).Debug("reading file")
+	log.With("file", abs).Debug("reading file")
 	bytes, err := os.ReadFile(abs)
 	if err != nil {
 		return nil, err
