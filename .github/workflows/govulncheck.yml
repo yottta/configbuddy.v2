@@ -11,10 +11,10 @@ permissions:
 
 jobs:
   run-govulncheck:
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/main'
     uses: yottta/github-workflows/.github/workflows/govulncheck.yaml@main
     with:
       enabled: true
-      branch-to-scan: 'master'
+      branch-to-scan: 'main'
     secrets:
       issues_gh_token: ${{ secrets.GITHUB_TOKEN }}
