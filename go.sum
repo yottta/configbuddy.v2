@@ -13,8 +13,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-github.com/yottta/go-core v0.0.8 h1:4c7GRAmEa5ZId3r+MHaLqEGsj/tqQJiRHcB0lCfy0xI=
-github.com/yottta/go-core v0.0.8/go.mod h1:V1fFSUKZ5RJuwFW+uQRFoUQ/bSpjKC6cCdTh30GHW8o=
+github.com/yottta/go-core v0.0.11 h1:i1rqvIMLJuPHNGjEyr2Da8xkN2ZvD1VcNsCf8AGzd0g=
+github.com/yottta/go-core v0.0.11/go.mod h1:0AVH1TVHUtyOuEPTW2gnPdIDTIpu7/ZjPc8+qjK/4A4=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
